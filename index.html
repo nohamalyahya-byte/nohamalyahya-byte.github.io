@@ -1,13 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nuha Alyahya</title>
-<style>body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#060F22}img{max-width:100%}</style>
-</head>
-<body>
-<title>Nuha Alyahya</title>
+<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>Nuha Alyahya</title>\n<style>body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#060F22}img{max-width:100%}</style>\n</head>\n<body>\n<title>Nuha Alyahya</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@300;400;500;600&display=swap">
 <style>
@@ -207,8 +198,8 @@
     <h2>Let&rsquo;s talk</h2>
     <div class="actions">
       <button class="btn primary" id="saveContact" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
-        Save contact
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+        Contact me
       </button>
       <button class="btn" id="viewCv" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
@@ -269,11 +260,28 @@
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){say('Contact details copied — paste into a new contact.');},function(){say('Email: noha.m.alyahya@gmail.com · +966 55 831 8322');});}
     else{say('Email: noha.m.alyahya@gmail.com · +966 55 831 8322');}
   }
-  document.getElementById('saveContact').addEventListener('click',function(){
+  function saveVcf(){
     var blob=new Blob([VCARD],{type:'text/vcard;charset=utf-8'});
     if(dlns){dlns.save({filename:'Nuha_Alyahya.vcf',data:blob}).then(function(){say('Contact card saved — open it to add Nuha to your contacts.');}).catch(function(err){
       if(err&&err.code==='declined'){say('');}else{copyContact();}});}
     else{download('Nuha_Alyahya.vcf',blob);say('Contact card downloaded — open it to add Nuha to your contacts.');}
+  }
+  function closeContactMenu(){var ex=document.getElementById('contactMenu');if(ex&&ex.parentNode){ex.parentNode.removeChild(ex);}document.removeEventListener('click',outsideClose,true);}
+  function outsideClose(e){var m=document.getElementById('contactMenu');if(m&&!m.contains(e.target)&&e.target.id!=='saveContact'&&!document.getElementById('saveContact').contains(e.target)){closeContactMenu();}}
+  document.getElementById('saveContact').addEventListener('click',function(){
+    if(document.getElementById('contactMenu')){closeContactMenu();return;}
+    var m=document.createElement('div');m.id='contactMenu';
+    m.style.cssText='margin:10px 0 4px;display:flex;flex-direction:column;gap:4px;background:rgba(13,32,63,.95);border:1px solid rgba(126,171,229,.30);border-radius:10px;padding:8px;max-width:320px;box-shadow:0 18px 50px rgba(0,0,0,.45)';
+    function item(label,fn){var a=document.createElement('button');a.type='button';a.textContent=label;
+      a.style.cssText='all:unset;box-sizing:border-box;cursor:pointer;padding:11px 14px;border-radius:7px;color:#E2EAF5;font:500 13.5px Montserrat,\'Helvetica Neue\',Arial,sans-serif;display:block;width:100%';
+      a.onmouseenter=function(){a.style.background='rgba(126,171,229,.12)';};
+      a.onmouseleave=function(){a.style.background='transparent';};
+      a.onclick=function(ev){ev.stopPropagation();closeContactMenu();fn();};m.appendChild(a);}
+    item('\uD83D\uDCDE  Call +966 55 831 8322',function(){window.location.href='tel:+966558318322';});
+    item('\uD83D\uDCAC  Message me on WhatsApp',function(){window.open('https://wa.me/966558318322','_blank','noopener');});
+    item('\uD83D\uDCBE  Save contact card (.vcf)',saveVcf);
+    var actions=document.querySelector('.actions');actions.insertAdjacentElement('afterend',m);
+    setTimeout(function(){document.addEventListener('click',outsideClose,true);},0);
   });
   document.getElementById('viewCv').addEventListener('click',function(){
     var blob=new Blob([b64ToBytes(CV_B64)],{type:'application/pdf'});
@@ -296,6 +304,4 @@
 })();
 </script>
 
-
-</body>
-</html>
+\n</body>\n</html>\n
